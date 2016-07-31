@@ -16,7 +16,7 @@ public class TreeResultTest {
 
   @Test
   @Ignore("needs local file, no asserts")
-  public void testPerformance() throws IOException {
+  public void testCheck() throws IOException {
     List<String> lines = Files.readAllLines(DICT_FILE.toPath());
     System.out.println("=== Test set size: " + DICT_SIZE + " ===");
     Tree root = TestTools.makeTree(lines, DICT_SIZE);
