@@ -32,7 +32,7 @@ public class TreeTest {
   @Ignore("needs local file")
   public void testLargeFile() throws IOException {
     List<String> lines = Files.readAllLines(DICT_FILE.toPath());
-    Tree root = TestTools.makeTree(lines, 250_000);
+    Tree root = TestTools.makeTreeWithSkippingEntries(lines, 250_000, 0.95f);
     assertTrue(root.containsWord("Charakterwahl"));
     assertSim1("Charakterwal", "Charakterwahl", root);
   }

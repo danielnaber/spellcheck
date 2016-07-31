@@ -11,20 +11,21 @@ final class TestTools {
   private TestTools() {
   }
 
-  static Tree makeTree(List<String> lines, int limit) {
+  static Tree makeTreeWithSkippingEntries(List<String> lines, int limit, float keepProbability) {
     Tree root = new Tree();
     long start = System.currentTimeMillis();
     int i = 0;
     int count = 0;
     Random rnd = new Random(1234);
     for (String line : lines) {
-      if (rnd.nextFloat() < 0.95) {
+      if (rnd.nextFloat() <= keepProbability) {
         // skip some entries so similarity search below has something to do:
         root.add(line.trim());
         count++;
       }
       //System.out.println("Adding '" + line.trim() + "'");
       if (++i >= limit) {
+        System.out.println("Stopping tree insertion at limit " + limit);
         break;
       }
     }

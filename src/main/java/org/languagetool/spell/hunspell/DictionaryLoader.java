@@ -59,8 +59,25 @@ public class DictionaryLoader {
         dicts.addAll(applyFlags(line, affixMap));
       }
     }
-    return mergeListsToDict(dicts);
+    Dictionary merged = mergeListsToDict(dicts);
+    //debug("", merged);
+    return merged;
   }
+
+  /*private void debug(String pattern, Dictionary dictionary) {
+    debug(pattern, "CompoundBeginWords", dictionary.getCompoundBeginWords());
+    debug(pattern, "CompoundEndWords", dictionary.getCompoundEndWords());
+    debug(pattern, "NonCompoundWords", dictionary.getNonCompoundWords());
+  }
+
+  private void debug(String pattern, String name, List<String> list) {
+    System.out.println("--- " + name);
+    for (String l : list) {
+      if (l.matches(pattern)) {
+        System.out.println("  " + l);
+      }
+    }
+  }*/
 
   private Dictionary mergeListsToDict(List<Dictionary> dicts) {
     Set<String> nonCompoundWords = new HashSet<>();

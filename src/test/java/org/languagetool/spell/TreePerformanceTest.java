@@ -23,7 +23,7 @@ public class TreePerformanceTest {
     List<Integer> maxDists = Arrays.asList(1, 2);
     for (Integer dictSize : dictSizes) {
       System.out.println("=== Test set size: " + dictSize + " ===");
-      Tree root = TestTools.makeTree(lines, dictSize);
+      Tree root = TestTools.makeTreeWithSkippingEntries(lines, dictSize, 0.95f);
       List<String> warmupLines = lines.subList(0, 100);
       for (String line : warmupLines) {
         root.containsWord(line);
