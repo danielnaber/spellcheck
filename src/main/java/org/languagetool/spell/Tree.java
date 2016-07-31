@@ -231,17 +231,17 @@ public class Tree {
     StringBuilder sb = new StringBuilder();
     sb.append(data);
     switch (endBehavior) {
-    case NotEnd:
-      sb.append('_');
-      break;
-    case CanEnd:
-      sb.append('.');
-      break;
-    case CannotEnd:
-      sb.append('+');
-      break;
-    case MustEnd:
-      sb.append('#');
+      case NotEnd:
+        sb.append('_');
+        break;
+      case CanEnd:
+        sb.append('.');
+        break;
+      case CannotEnd:
+        sb.append('+');
+        break;
+      case MustEnd:
+        sb.append('#');
     }
     for (Tree leaf : leaves) {
       sb.append("{");
