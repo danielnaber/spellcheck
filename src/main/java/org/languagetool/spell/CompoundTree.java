@@ -15,35 +15,34 @@ public class CompoundTree {
 
   public boolean containsWord(String word) {
     Tree nodeOrNull = getNodeOrNull(word, tree);
-    if (nodeOrNull == null) {
-      return false;
-    }
     //System.out.println(nodeOrNull + " -> leaves: " + nodeOrNull.getLeaves().size() + ", end node: " + nodeOrNull.getEndNode());
-    return nodeOrNull.getLeaves().size() == 0 || nodeOrNull.getEndNode() == Tree.EndBehavior.CanEnd || nodeOrNull.getEndNode() == Tree.EndBehavior.MustEnd;
+    return nodeOrNull != null && nodeOrNull.getEndNode().canEnd();
   }
 
-  private Tree getNodeOrNull(String rest, Tree node) {
-    //System.out.println("================ " + rest + " node: " + node + ", end: " + (node != null && node.getEndNode()));
-    if (rest.length() == 0) {
+  private Tree getNodeOrNull(String str, Tree node) {
+    //System.out.println("================ " + str + " node: " + node + ", end: " + (node != null && node.getEndNode()));
+    if (str.length() == 0) {
       //System.out.println("-> node: " + node);
       return node;
-    } 
-    if (node != null && (node.getEndNode() == Tree.EndBehavior.CanEnd || node.getEndNode() == Tree.EndBehavior.MustEnd)) {
-      Tree nodeOrNull = getNodeOrNull(rest, suffixTree);
-      if (nodeOrNull != null) {
-        return nodeOrNull;    // e.g. "Haus+tür"
-      } else {
-        return null;          // e.g. "Haus+asdf"
-      }
     }
-    if (node != null) {
-      char firstChar = rest.charAt(0);
-      Tree subNode = node.child(firstChar);
-      // keep eating the input while iterating the tree:
-      return getNodeOrNull(rest.substring(1), subNode);
-    } else {
+    if (node == null) {
       return null;
     }
+
+    final Tree subNode = node.child(str.charAt(0));
+    final String rest = str.substring(1);
+
+    if (subNode != null && subNode.getEndNode().canHaveSuffix()) {
+
+      final Tree suffixNodeOrNull = getNodeOrNull(rest, suffixTree);
+
+      if (suffixNodeOrNull != null && suffixNodeOrNull.getEndNode().canEnd()) {
+        return suffixNodeOrNull;    // e.g. "Haus+tür"
+      }
+    }
+
+    // keep eating the input while iterating the tree:
+    return getNodeOrNull(rest, subNode);
   }
 
   public List<String> getSimilarWords(String word, int maxDist) {
@@ -51,7 +50,7 @@ public class CompoundTree {
     getSimilarWords(word, tree, 0, maxDist, result);
     return result;
   }
-  
+
   private Tree getSimilarWords(String rest, Tree node, int dist, int maxDist, List<String> result) {
     //System.out.println("================ '" + rest + "' node: " + node + ", end: " + (node != null && node.getEndNode()));
     if (rest.length() == 0) {
@@ -62,8 +61,8 @@ public class CompoundTree {
         result.add(pathToRoot);
       }
       return node;
-    } 
-    if (node != null && (node.getEndNode() == Tree.EndBehavior.CanEnd || node.getEndNode() == Tree.EndBehavior.MustEnd)) {
+    }
+    if (node != null && (node.getEndNode().canHaveSuffix())) {
       Tree nodeOrNull = getSimilarWords(rest, suffixTree, dist, maxDist, result);
       if (nodeOrNull != null) {
         //result.add(node.getPathToRoot(node));

@@ -5,9 +5,63 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Tree {
-  
+
   enum EndBehavior {
-    CanEnd, CannotEnd, MustEnd
+
+    /**
+     * Not the end of the word. I.e. an internal letter.
+     */
+    NotEnd() {
+      @Override
+      EndBehavior combine(EndBehavior other) {
+        return other;
+      }
+    },
+
+    /**
+     * When the letter is the end of the word, the suffix is allowed.
+     */
+    CanEnd() {
+      @Override
+      EndBehavior combine(EndBehavior other) {
+        return this;
+      }
+    },
+
+    /**
+     * When the letter is the end of the word, the suffix is required.
+     */
+    CannotEnd() {
+      @Override
+      EndBehavior combine(EndBehavior other) {
+        return other.canEnd() ? CanEnd : this;
+      }
+    },
+
+    /**
+     * When the letter is the end of the word, the suffix is prohibited.
+     */
+    MustEnd() {
+      @Override
+      EndBehavior combine(EndBehavior other) {
+        return other.canContinue() ? CanEnd : this;
+      }
+    };
+
+    abstract EndBehavior combine(EndBehavior other);
+
+    boolean canEnd() {
+      return this != CannotEnd && this != NotEnd;
+    }
+
+    boolean canContinue() {
+      return this != MustEnd;
+    }
+
+    boolean canHaveSuffix() {
+      return this == CanEnd || this == CannotEnd;
+    }
+
   }
 
   private static final boolean DEBUG = false;
@@ -16,7 +70,7 @@ public class Tree {
   private final List<Tree> leaves = new LinkedList<>();
   private final Tree parent;
   private final char data;
-  private final EndBehavior endBehavior;
+  private EndBehavior endBehavior;
   
   private int depth;
 
@@ -27,11 +81,11 @@ public class Tree {
   }
   
   public Tree() {
-    this(NULL_CHAR, null, null);
+    this(NULL_CHAR, null, EndBehavior.NotEnd);
   }
   
   public void add(String s) {
-    add(s, this, EndBehavior.MustEnd);
+    add(s, this, EndBehavior.CanEnd);
   }
   
   public void add(String s, EndBehavior endBehavior) {
@@ -55,6 +109,9 @@ public class Tree {
       if (child != null) {
         node = child;
         i++;
+        if (i == n) {
+          node.endBehavior = node.endBehavior.combine(endBehavior);
+        }
       } else {
         break;
       }
@@ -62,11 +119,11 @@ public class Tree {
     // append new nodes, if necessary
     while (i < n) {
       char ch = s.charAt(i);
-      Tree tree = i == n-1 ? new Tree(ch, node, endBehavior) : new Tree(ch, node, EndBehavior.CannotEnd);
+      Tree tree = new Tree(ch, node, i == n - 1 ? endBehavior : EndBehavior.NotEnd);
       node.leaves.add(tree);
       node = node.child(ch);
       i++;
-    }    
+    }
   }
 
   protected Tree child(char c) {
@@ -83,7 +140,7 @@ public class Tree {
     if (nodeOrNull == null) {
       return false;
     }
-    return nodeOrNull.leaves.size() == 0 || nodeOrNull.endBehavior == EndBehavior.CanEnd || nodeOrNull.endBehavior == EndBehavior.MustEnd;
+    return nodeOrNull.getEndNode().canEnd();
   }
 
   public List<String> getSimilarWords(String word, int maxDist) {
@@ -127,7 +184,7 @@ public class Tree {
         return;
       }
     }
-    boolean b = (node.leaves.size() == 0 || node.endBehavior == EndBehavior.CanEnd || node.endBehavior == EndBehavior.MustEnd) && dist <= maxDist;
+    boolean b = (node.leaves.size() == 0 || node.endBehavior.canEnd()) && dist <= maxDist;
     print("b = " + b  + " dist: " + dist + ", node.leaves.size(): " + node.leaves);
     if (!b) {
       // special case for deletion of last character:
@@ -169,16 +226,22 @@ public class Tree {
   public String toString() {
     return toString(0);
   }
-  
+
   public String toString(int level) {
     StringBuilder sb = new StringBuilder();
     sb.append(data);
-    if (endBehavior == EndBehavior.CanEnd) {
-      sb.append(".");
-    } else if (endBehavior == EndBehavior.CannotEnd) {
-      sb.append("+");
-    } else if (endBehavior == EndBehavior.MustEnd) {
-      sb.append("#");
+    switch (endBehavior) {
+    case NotEnd:
+      sb.append('_');
+      break;
+    case CanEnd:
+      sb.append('.');
+      break;
+    case CannotEnd:
+      sb.append('+');
+      break;
+    case MustEnd:
+      sb.append('#');
     }
     for (Tree leaf : leaves) {
       sb.append("{");
