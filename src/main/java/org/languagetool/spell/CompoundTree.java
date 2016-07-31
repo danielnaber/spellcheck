@@ -29,13 +29,11 @@ public class CompoundTree {
       return null;
     }
 
-    final Tree subNode = node.child(str.charAt(0));
-    final String rest = str.substring(1);
+    Tree subNode = node.child(str.charAt(0));
+    String rest = str.substring(1);
 
     if (subNode != null && subNode.getEndNode().canHaveSuffix()) {
-
-      final Tree suffixNodeOrNull = getNodeOrNull(rest, suffixTree);
-
+      Tree suffixNodeOrNull = getNodeOrNull(rest, suffixTree);
       if (suffixNodeOrNull != null && suffixNodeOrNull.getEndNode().canEnd()) {
         return suffixNodeOrNull;    // e.g. "Haus+tür"
       }
@@ -62,7 +60,7 @@ public class CompoundTree {
       }
       return node;
     }
-    if (node != null && (node.getEndNode().canHaveSuffix())) {
+    if (node != null && node.getEndNode().canHaveSuffix()) {
       Tree nodeOrNull = getSimilarWords(rest, suffixTree, dist, maxDist, result);
       if (nodeOrNull != null) {
         //result.add(node.getPathToRoot(node));
