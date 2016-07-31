@@ -65,6 +65,24 @@ public class TreeTest {
   }
 
   @Test
+  public void testDifferentOrder1() {
+    Tree root = new Tree();
+    root.add("Hauses");
+    root.add("Haus");
+    assertTrue(root.containsWord("Haus"));
+    assertTrue(root.containsWord("Hauses"));
+  }
+
+  @Test
+  public void testDifferentOrder2() {
+    Tree root = new Tree();
+    root.add("Hauses");
+    root.add("Hause");
+    assertTrue(root.containsWord("Hause"));
+    assertTrue(root.containsWord("Hauses"));
+  }
+
+  @Test
   public void testContainsWordDifferentWordLength2() {
     Tree root = new Tree();
     root.add("Haus");
