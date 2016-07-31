@@ -121,8 +121,6 @@ public class CompoundTreeTest {
     suffixRoot.add("arbeit", Tree.EndBehavior.MustEnd);
     suffixRoot.add("arbeits", Tree.EndBehavior.CannotEnd);
     suffixRoot.add("test", Tree.EndBehavior.CanEnd);
-    System.out.println("tree : " + root);
-    System.out.println("stree: " + suffixRoot);
 
     CompoundTree tree = new CompoundTree(root, suffixRoot);
 
@@ -142,6 +140,33 @@ public class CompoundTreeTest {
     assertFalse(tree.containsWord("Tests"));
     assertFalse(tree.containsWord("Arbeitstestarbeits"));
     assertFalse(tree.containsWord("Testarbeittest"));
+  }
+
+  @Test
+  public void testRealContainsWordCompounds2() {
+    Tree root = new Tree();
+    root.add("Abbau", Tree.EndBehavior.CanEnd);
+
+    Tree suffixRoot = new Tree();
+    suffixRoot.add("geräusch", Tree.EndBehavior.CanEnd);
+    suffixRoot.add("geräuschs", Tree.EndBehavior.MustEnd);
+    suffixRoot.add("geräusche", Tree.EndBehavior.MustEnd);
+    suffixRoot.add("geräusches", Tree.EndBehavior.MustEnd);
+    suffixRoot.add("geräuschen", Tree.EndBehavior.MustEnd);
+
+    //System.out.println("tree : " + root);
+    //System.out.println("stree: " + suffixRoot);
+
+    CompoundTree tree = new CompoundTree(root, suffixRoot);
+
+    assertTrue(tree.containsWord("Abbau"));
+    assertTrue(tree.containsWord("Abbaugeräusche"));
+    assertTrue(tree.containsWord("Abbaugeräusche"));
+    assertTrue(tree.containsWord("Abbaugeräuschen"));
+    assertTrue(tree.containsWord("Abbaugeräusches"));
+    assertTrue(tree.containsWord("Abbaugeräuschs"));
+
+    assertFalse(tree.containsWord("Abbausgeräuschs"));
   }
 
   @Test
