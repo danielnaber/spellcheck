@@ -9,7 +9,7 @@ public class Tree {
   enum EndBehavior {
 
     /**
-     * Not the end of the word. I.e. an internal letter.
+     * Not the end of the word. I.e. a letter inside a word.
      */
     NotEnd() {
       @Override
@@ -19,7 +19,7 @@ public class Tree {
     },
 
     /**
-     * When the letter is the end of the word, the suffix is allowed.
+     * When the letter is the end of the word, the suffix is allowed (e.g. "Test").
      */
     CanEnd() {
       @Override
@@ -29,7 +29,7 @@ public class Tree {
     },
 
     /**
-     * When the letter is the end of the word, the suffix is required.
+     * When the letter is the end of the word, the suffix is required (e.g. "Arbeits")
      */
     CannotEnd() {
       @Override
@@ -39,7 +39,7 @@ public class Tree {
     },
 
     /**
-     * When the letter is the end of the word, the suffix is prohibited.
+     * When the letter is the end of the word, the suffix is prohibited (e.g. "Arbeit").
      */
     MustEnd() {
       @Override
